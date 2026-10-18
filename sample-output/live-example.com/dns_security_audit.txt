@@ -1,0 +1,46 @@
+================================================================================
+ DNSShield v1.0.0 - DNS Misconfiguration & Email Security Audit
+================================================================================
+ Generated    : 2026-10-17 11:17:59
+ Target       : example.com
+ Hosts audited: 1
+ Duration     : 00:00:02
+ Verdict      : WARNING
+ Checks       : 13 pass, 1 warning, 0 vulnerable, 5 info
+================================================================================
+
+--------------------------------------------------------------------------------
+ MODULE 1 - Email authentication & anti-spoofing
+--------------------------------------------------------------------------------
+   [PASS] SPF record                 present: v=spf1 -all
+   [INFO] SPF mechanisms             0 mechanism(s) authorised
+   [PASS] SPF all mechanism          -all - hard fail, strict policy
+   [PASS] DMARC record               present: v=DMARC1;p=reject;sp=reject;adkim=s;aspf=s
+   [PASS] DMARC policy               p=reject - forged mail is refused
+   [INFO] DMARC subdomain policy     sp=reject
+   [WARN] DKIM keys                  all 23 probes return a revoked key (v=DKIM1; p=) - wildcarded, so no DKIM signing but subdomain key hijacking is blocked
+   [PASS] _dmarc.example.com         p=reject
+--------------------------------------------------------------------------------
+ MODULE 2 - Dangling CNAME / cloud asset verification
+--------------------------------------------------------------------------------
+   [INFO] example.com                no CNAME record (A/AAAA only)
+--------------------------------------------------------------------------------
+ MODULE 3 - Nameservers & zone transfer
+--------------------------------------------------------------------------------
+   [PASS] Authoritative NS           2 name server(s): hera.ns.cloudflare.com elliott.ns.cloudflare.com
+   [PASS] NS redundancy              2 name servers configured
+   [PASS] Zone transfer hera.ns.cloudflare.com AXFR refused - zone is protected
+   [PASS] Zone transfer elliott.ns.cloudflare.com AXFR refused - zone is protected
+   [INFO] Registrar                  RESERVED-Internet Assigned Numbers Authority
+   [INFO] Domain created             1995-08-14T04:00:00Z
+   [PASS] NS delegation              whois and authoritative NS agree
+--------------------------------------------------------------------------------
+ MODULE 4 - DNSSEC & wildcard detection
+--------------------------------------------------------------------------------
+   [PASS] DNSSEC                     enabled - 4 DNSKEY record(s), chain validated (ad flag)
+   [PASS] DNSSEC chain               DS record present at the parent
+   [PASS] Wildcard DNS               no wildcard record - random labels do not resolve
+
+================================================================================
+ END OF REPORT
+================================================================================

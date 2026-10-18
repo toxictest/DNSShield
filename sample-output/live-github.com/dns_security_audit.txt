@@ -1,0 +1,57 @@
+================================================================================
+ DNSShield v1.0.0 - DNS Misconfiguration & Email Security Audit
+================================================================================
+ Generated    : 2026-10-17 11:18:00
+ Target       : github.com
+ Hosts audited: 4
+ Duration     : 00:00:01
+ Verdict      : VULNERABLE
+ Checks       : 13 pass, 7 warning, 2 vulnerable, 8 info
+================================================================================
+
+--------------------------------------------------------------------------------
+ MODULE 1 - Email authentication & anti-spoofing
+--------------------------------------------------------------------------------
+   [PASS] SPF record                 present: v=spf1 ip4:192.30.252.0/22 include:spf.protection.outlook.com include:_netblocks.google.com include:_netblocks2.google.com include:mail.zendesk.com include:_spf.salesforce.com include:servers.mcsv.net include:mktomail.com include:sendgrid.net ip4:62.253.227.114 ip4:166.78.69.169 ip4:166.78.69.170 ip4:166.78.71.131 ~all
+   [INFO] SPF mechanisms             13 mechanism(s) authorised
+   [WARN] SPF all mechanism          ~all - soft fail, consider -all
+   [PASS] DMARC record               present: v=DMARC1; p=quarantine; sp=reject; pct=100; rua=mailto:dmarc@github.com; ruf=mailto:dmarc@github.com; fo=1
+   [WARN] DMARC policy               p=quarantine - not full enforcement
+   [INFO] DMARC subdomain policy     sp=reject
+   [INFO] DMARC reporting            rua=mailto:dmarc@github.com
+   [PASS] DKIM keys                  6 working key(s): google selector1 k1 k2 s1 s2
+   [INFO] DKIM delegation            5 selector(s) are CNAMEs to a mail provider
+   [WARN] _dmarc.github.com          p=quarantine
+--------------------------------------------------------------------------------
+ MODULE 2 - Dangling CNAME / cloud asset verification
+--------------------------------------------------------------------------------
+   [INFO] github.com                 no CNAME record (A/AAAA only)
+   [PASS] www.github.com             CNAME -> github.com (not a known cloud provider)
+   [INFO] assets.github.com          no CNAME record (A/AAAA only)
+   [PASS] gist.github.com            CNAME -> github.com (not a known cloud provider)
+--------------------------------------------------------------------------------
+ MODULE 3 - Nameservers & zone transfer
+--------------------------------------------------------------------------------
+   [PASS] Authoritative NS           8 name server(s): dns1.p08.nsone.net ns-520.awsdns-01.net dns2.p08.nsone.net ns-1283.awsdns-32.org ns-1707.awsdns-21.co.uk dns4.p08.nsone.net dns3.p08.nsone.net ns-421.awsdns-52.com
+   [PASS] NS redundancy              8 name servers configured
+   [PASS] Zone transfer dns1.p08.nsone.net AXFR refused - zone is protected
+   [WARN] Zone transfer ns-520.awsdns-01.net could not be tested - the server did not answer
+   [PASS] Zone transfer dns2.p08.nsone.net AXFR refused - zone is protected
+   [WARN] Zone transfer ns-1283.awsdns-32.org could not be tested - the server did not answer
+   [WARN] Zone transfer ns-1707.awsdns-21.co.uk could not be tested - the server did not answer
+   [PASS] Zone transfer dns4.p08.nsone.net AXFR refused - zone is protected
+   [PASS] Zone transfer dns3.p08.nsone.net AXFR refused - zone is protected
+   [WARN] Zone transfer ns-421.awsdns-52.com could not be tested - the server did not answer
+   [INFO] Registrar                  MarkMonitor Inc.
+   [INFO] Domain created             2007-10-09T18:20:50Z
+   [PASS] NS delegation              whois and authoritative NS agree
+--------------------------------------------------------------------------------
+ MODULE 4 - DNSSEC & wildcard detection
+--------------------------------------------------------------------------------
+   [FAIL] DNSSEC                     not enabled - no DNSKEY record, responses can be forged
+   [FAIL] DNSSEC chain               no DS record at the parent either
+   [PASS] Wildcard DNS               no wildcard record - random labels do not resolve
+
+================================================================================
+ END OF REPORT
+================================================================================

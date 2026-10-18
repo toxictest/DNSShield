@@ -1,0 +1,69 @@
+[1;36m
+  ┌──────────────────────────────────────────────────────┐
+  │  [1mDNSShield v1.0.0                                    │
+  │  DNS Misconfiguration & Email Security Auditor       │
+  └──────────────────────────────────────────────────────┘
+[0m
+  Free & standalone. dig + awk/grep/sed/tr. No API keys.
+
+
+[1;34mStage 0/6 - Dependency verification[0m
+[11:18:02] [1;32mOK[0m     dig        /tmp/dnsshield-sample.mzQTxV/bin/dig
+[11:18:02] [1;32mOK[0m     awk        /usr/bin/awk
+[11:18:02] [1;32mOK[0m     grep       /usr/bin/grep
+[11:18:02] [1;32mOK[0m     sed        /usr/bin/sed
+[11:18:02] [1;32mOK[0m     tr         /usr/bin/tr
+[11:18:02] [1;32mOK[0m     whois      present (optional)
+[11:18:02] [1;32mOK[0m     host       present (optional)
+[11:18:02] [1;32mOK[0m     nslookup   present (optional)
+[11:18:02] [1;32mOK[0m     curl       present (optional - HTTP dangling check)
+
+[1;34mStage 1/6 - Target preparation[0m
+[11:18:02] [1;32mOK[0m     3 host(s) queued for the CNAME / dangling sweep.
+
+[1;34mStage 2/6 - Module 1: email authentication (SPF / DMARC / DKIM)[0m
+[11:18:03] [1;32mOK[0m     Email authentication checks complete.
+
+[1;34mStage 3/6 - Module 2: CNAME sweep and dangling pointer detection[0m
+[11:18:03] [1;32mOK[0m     CNAME sweep complete for 3 host(s).
+
+[1;34mStage 4/6 - Module 3: nameservers and zone transfer[0m
+[11:18:03] [1;32mOK[0m     Nameserver and AXFR checks complete.
+
+[1;34mStage 5/6 - Module 4: DNSSEC and wildcard detection[0m
+[11:18:03] [1;32mOK[0m     DNSSEC and wildcard checks complete.
+
+[1;34mStage 6/6 - Results and report[0m
+  [1;34mModule 1 - Email authentication & anti-spoofing[0m
+    [1;32m[ OK ][0m SPF record                 present: v=spf1 +all
+    [1;36m[INFO][0m SPF mechanisms             0 mechanism(s) authorised
+    [1;31m[FAIL][0m SPF all mechanism          +all - ANY host may send mail for this domain
+    [1;31m[FAIL][0m DMARC record               MISSING at _dmarc.vulnerable-demo.test - no spoofing policy
+    [1;33m[WARN][0m DKIM keys                  1 selector(s) return a revoked key (v=DKIM1; p=) - no usable DKIM key
+  [1;34mModule 2 - Dangling CNAME / cloud asset verification[0m
+    [1;36m[INFO][0m vulnerable-demo.test       no CNAME record (A/AAAA only)
+    [1;31m[FAIL][0m legacy.vulnerable-demo.test CNAME -> legacy-vault.s3.amazonaws.com (Amazon S3) - NXDOMAIN: Potential Dangling Pointer / High Risk
+    [1;31m[FAIL][0m apps.vulnerable-demo.test  CNAME -> old-app.herokuapp.com (Heroku) - NXDOMAIN: Potential Dangling Pointer / High Risk
+  [1;34mModule 3 - Nameservers & zone transfer[0m
+    [1;32m[ OK ][0m Authoritative NS           2 name server(s): ns1.vulnerable-demo.test ns2.vulnerable-demo.test
+    [1;32m[ OK ][0m NS redundancy              2 name servers configured
+    [1;31m[FAIL][0m Zone transfer ns1.vulnerable-demo.test AXFR SUCCEEDED - 6 records dumped, full zone exposed
+    [1;32m[ OK ][0m Zone transfer ns2.vulnerable-demo.test AXFR refused - zone is protected
+    [1;36m[INFO][0m Registrar                  Example Registrar Inc.
+    [1;36m[INFO][0m Domain created             2016-03-04T11:22:33Z
+    [1;32m[ OK ][0m NS delegation              whois and authoritative NS agree
+  [1;34mModule 4 - DNSSEC & wildcard detection[0m
+    [1;31m[FAIL][0m DNSSEC                     not enabled - no DNSKEY record, responses can be forged
+    [1;31m[FAIL][0m DNSSEC chain               no DS record at the parent either
+    [1;33m[WARN][0m Wildcard DNS               a random label resolves to 192.0.2.99 - catch-all record in use
+
+[11:18:03] [1;32mOK[0m     Report written: /tmp/dnsshield-sample.mzQTxV/sim-tty/vulnerable-demo.test/dns_security_audit.txt
+[11:18:03] [1;32mOK[0m     Timestamped copy: /tmp/dnsshield-sample.mzQTxV/sim-tty/vulnerable-demo.test/dns_security_audit_20261017_111803.txt
+[1mAudit summary[0m
+  [2mTarget         [1mvulnerable-demo.test[0m
+  [2mVerdict        [1;31mVULNERABLE[0m
+  [2mHosts          3
+  [2mChecks         [1;32m5 pass[0m   [1;33m2 warning[0m   [1;31m7 vulnerable[0m   [1;36m4 info[0m
+  [2mReport         /tmp/dnsshield-sample.mzQTxV/sim-tty/vulnerable-demo.test/dns_security_audit.txt
+
+

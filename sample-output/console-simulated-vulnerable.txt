@@ -1,0 +1,68 @@
+
+  ┌──────────────────────────────────────────────────────┐
+  │  DNSShield v1.0.0                                    │
+  │  DNS Misconfiguration & Email Security Auditor       │
+  └──────────────────────────────────────────────────────┘
+
+  Free & standalone. dig + awk/grep/sed/tr. No API keys.
+
+
+Stage 0/6 - Dependency verification
+[11:18:00] OK     dig        /tmp/dnsshield-sample.mzQTxV/bin/dig
+[11:18:00] OK     awk        /usr/bin/awk
+[11:18:00] OK     grep       /usr/bin/grep
+[11:18:00] OK     sed        /usr/bin/sed
+[11:18:00] OK     tr         /usr/bin/tr
+[11:18:00] OK     whois      present (optional)
+[11:18:00] OK     host       present (optional)
+[11:18:00] OK     nslookup   present (optional)
+[11:18:00] OK     curl       present (optional - HTTP dangling check)
+
+Stage 1/6 - Target preparation
+[11:18:00] OK     3 host(s) queued for the CNAME / dangling sweep.
+
+Stage 2/6 - Module 1: email authentication (SPF / DMARC / DKIM)
+[11:18:01] OK     Email authentication checks complete.
+
+Stage 3/6 - Module 2: CNAME sweep and dangling pointer detection
+[11:18:01] OK     CNAME sweep complete for 3 host(s).
+
+Stage 4/6 - Module 3: nameservers and zone transfer
+[11:18:01] OK     Nameserver and AXFR checks complete.
+
+Stage 5/6 - Module 4: DNSSEC and wildcard detection
+[11:18:01] OK     DNSSEC and wildcard checks complete.
+
+Stage 6/6 - Results and report
+  Module 1 - Email authentication & anti-spoofing
+    [ OK ] SPF record                 present: v=spf1 +all
+    [INFO] SPF mechanisms             0 mechanism(s) authorised
+    [FAIL] SPF all mechanism          +all - ANY host may send mail for this domain
+    [FAIL] DMARC record               MISSING at _dmarc.vulnerable-demo.test - no spoofing policy
+    [WARN] DKIM keys                  1 selector(s) return a revoked key (v=DKIM1; p=) - no usable DKIM key
+  Module 2 - Dangling CNAME / cloud asset verification
+    [INFO] vulnerable-demo.test       no CNAME record (A/AAAA only)
+    [FAIL] legacy.vulnerable-demo.test CNAME -> legacy-vault.s3.amazonaws.com (Amazon S3) - NXDOMAIN: Potential Dangling Pointer / High Risk
+    [FAIL] apps.vulnerable-demo.test  CNAME -> old-app.herokuapp.com (Heroku) - NXDOMAIN: Potential Dangling Pointer / High Risk
+  Module 3 - Nameservers & zone transfer
+    [ OK ] Authoritative NS           2 name server(s): ns1.vulnerable-demo.test ns2.vulnerable-demo.test
+    [ OK ] NS redundancy              2 name servers configured
+    [FAIL] Zone transfer ns1.vulnerable-demo.test AXFR SUCCEEDED - 6 records dumped, full zone exposed
+    [ OK ] Zone transfer ns2.vulnerable-demo.test AXFR refused - zone is protected
+    [INFO] Registrar                  Example Registrar Inc.
+    [INFO] Domain created             2016-03-04T11:22:33Z
+    [ OK ] NS delegation              whois and authoritative NS agree
+  Module 4 - DNSSEC & wildcard detection
+    [FAIL] DNSSEC                     not enabled - no DNSKEY record, responses can be forged
+    [FAIL] DNSSEC chain               no DS record at the parent either
+    [WARN] Wildcard DNS               a random label resolves to 192.0.2.99 - catch-all record in use
+
+[11:18:01] OK     Report written: /tmp/dnsshield-sample.mzQTxV/sim/vulnerable-demo.test/dns_security_audit.txt
+[11:18:01] OK     Timestamped copy: /tmp/dnsshield-sample.mzQTxV/sim/vulnerable-demo.test/dns_security_audit_20261017_111801.txt
+Audit summary
+  Target         vulnerable-demo.test
+  Verdict        VULNERABLE
+  Hosts          3
+  Checks         5 pass   2 warning   7 vulnerable   4 info
+  Report         /tmp/dnsshield-sample.mzQTxV/sim/vulnerable-demo.test/dns_security_audit.txt
+

@@ -1,0 +1,70 @@
+[1;36m
+  ┌──────────────────────────────────────────────────────┐
+  │  [1mDNSShield v1.0.0                                    │
+  │  DNS Misconfiguration & Email Security Auditor       │
+  └──────────────────────────────────────────────────────┘
+[0m
+  Free & standalone. dig + awk/grep/sed/tr. No API keys.
+
+
+[1;34mStage 0/6 - Dependency verification[0m
+[11:18:01] [1;32mOK[0m     dig        /usr/bin/dig
+[11:18:01] [1;32mOK[0m     awk        /usr/bin/awk
+[11:18:01] [1;32mOK[0m     grep       /usr/bin/grep
+[11:18:01] [1;32mOK[0m     sed        /usr/bin/sed
+[11:18:01] [1;32mOK[0m     tr         /usr/bin/tr
+[11:18:01] [1;32mOK[0m     whois      present (optional)
+[11:18:01] [1;32mOK[0m     host       present (optional)
+[11:18:01] [1;32mOK[0m     nslookup   present (optional)
+[11:18:01] [1;32mOK[0m     curl       present (optional - HTTP dangling check)
+
+[1;34mStage 1/6 - Target preparation[0m
+[11:18:01] [1;32mOK[0m     1 host(s) queued for the CNAME / dangling sweep.
+
+[1;34mStage 2/6 - Module 1: email authentication (SPF / DMARC / DKIM)[0m
+[11:18:02] [1;32mOK[0m     Email authentication checks complete.
+
+[1;34mStage 3/6 - Module 2: CNAME sweep and dangling pointer detection[0m
+[11:18:02] [1;32mOK[0m     CNAME sweep complete for 1 host(s).
+
+[1;34mStage 4/6 - Module 3: nameservers and zone transfer[0m
+[11:18:02] [1;32mOK[0m     Nameserver and AXFR checks complete.
+
+[1;34mStage 5/6 - Module 4: DNSSEC and wildcard detection[0m
+[11:18:02] [1;32mOK[0m     DNSSEC and wildcard checks complete.
+
+[1;34mStage 6/6 - Results and report[0m
+  [1;34mModule 1 - Email authentication & anti-spoofing[0m
+    [1;32m[ OK ][0m SPF record                 present: v=spf1 -all
+    [1;36m[INFO][0m SPF mechanisms             0 mechanism(s) authorised
+    [1;32m[ OK ][0m SPF all mechanism          -all - hard fail, strict policy
+    [1;32m[ OK ][0m DMARC record               present: v=DMARC1;p=reject;sp=reject;adkim=s;aspf=s
+    [1;32m[ OK ][0m DMARC policy               p=reject - forged mail is refused
+    [1;36m[INFO][0m DMARC subdomain policy     sp=reject
+    [1;33m[WARN][0m DKIM keys                  all 23 probes return a revoked key (v=DKIM1; p=) - wildcarded, so no DKIM signing but subdomain key hijacking is blocked
+    [1;32m[ OK ][0m _dmarc.example.com         p=reject
+  [1;34mModule 2 - Dangling CNAME / cloud asset verification[0m
+    [1;36m[INFO][0m example.com                no CNAME record (A/AAAA only)
+  [1;34mModule 3 - Nameservers & zone transfer[0m
+    [1;32m[ OK ][0m Authoritative NS           2 name server(s): hera.ns.cloudflare.com elliott.ns.cloudflare.com
+    [1;32m[ OK ][0m NS redundancy              2 name servers configured
+    [1;32m[ OK ][0m Zone transfer hera.ns.cloudflare.com AXFR refused - zone is protected
+    [1;32m[ OK ][0m Zone transfer elliott.ns.cloudflare.com AXFR refused - zone is protected
+    [1;36m[INFO][0m Registrar                  RESERVED-Internet Assigned Numbers Authority
+    [1;36m[INFO][0m Domain created             1995-08-14T04:00:00Z
+    [1;32m[ OK ][0m NS delegation              whois and authoritative NS agree
+  [1;34mModule 4 - DNSSEC & wildcard detection[0m
+    [1;32m[ OK ][0m DNSSEC                     enabled - 4 DNSKEY record(s), chain validated (ad flag)
+    [1;32m[ OK ][0m DNSSEC chain               DS record present at the parent
+    [1;32m[ OK ][0m Wildcard DNS               no wildcard record - random labels do not resolve
+
+[11:18:02] [1;32mOK[0m     Report written: /tmp/dnsshield-sample.mzQTxV/live-example-tty/example.com/dns_security_audit.txt
+[11:18:02] [1;32mOK[0m     Timestamped copy: /tmp/dnsshield-sample.mzQTxV/live-example-tty/example.com/dns_security_audit_20261017_111802.txt
+[1mAudit summary[0m
+  [2mTarget         [1mexample.com[0m
+  [2mVerdict        [1;33mWARNING[0m
+  [2mHosts          1
+  [2mChecks         [1;32m13 pass[0m   [1;33m1 warning[0m   [1;31m0 vulnerable[0m   [1;36m5 info[0m
+  [2mReport         /tmp/dnsshield-sample.mzQTxV/live-example-tty/example.com/dns_security_audit.txt
+
+

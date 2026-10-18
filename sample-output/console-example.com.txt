@@ -1,0 +1,69 @@
+
+  ┌──────────────────────────────────────────────────────┐
+  │  DNSShield v1.0.0                                    │
+  │  DNS Misconfiguration & Email Security Auditor       │
+  └──────────────────────────────────────────────────────┘
+
+  Free & standalone. dig + awk/grep/sed/tr. No API keys.
+
+
+Stage 0/6 - Dependency verification
+[11:17:57] OK     dig        /usr/bin/dig
+[11:17:57] OK     awk        /usr/bin/awk
+[11:17:57] OK     grep       /usr/bin/grep
+[11:17:57] OK     sed        /usr/bin/sed
+[11:17:57] OK     tr         /usr/bin/tr
+[11:17:57] OK     whois      present (optional)
+[11:17:57] OK     host       present (optional)
+[11:17:57] OK     nslookup   present (optional)
+[11:17:57] OK     curl       present (optional - HTTP dangling check)
+
+Stage 1/6 - Target preparation
+[11:17:57] OK     1 host(s) queued for the CNAME / dangling sweep.
+
+Stage 2/6 - Module 1: email authentication (SPF / DMARC / DKIM)
+[11:17:58] OK     Email authentication checks complete.
+
+Stage 3/6 - Module 2: CNAME sweep and dangling pointer detection
+[11:17:58] OK     CNAME sweep complete for 1 host(s).
+
+Stage 4/6 - Module 3: nameservers and zone transfer
+[11:17:59] OK     Nameserver and AXFR checks complete.
+
+Stage 5/6 - Module 4: DNSSEC and wildcard detection
+[11:17:59] OK     DNSSEC and wildcard checks complete.
+
+Stage 6/6 - Results and report
+  Module 1 - Email authentication & anti-spoofing
+    [ OK ] SPF record                 present: v=spf1 -all
+    [INFO] SPF mechanisms             0 mechanism(s) authorised
+    [ OK ] SPF all mechanism          -all - hard fail, strict policy
+    [ OK ] DMARC record               present: v=DMARC1;p=reject;sp=reject;adkim=s;aspf=s
+    [ OK ] DMARC policy               p=reject - forged mail is refused
+    [INFO] DMARC subdomain policy     sp=reject
+    [WARN] DKIM keys                  all 23 probes return a revoked key (v=DKIM1; p=) - wildcarded, so no DKIM signing but subdomain key hijacking is blocked
+    [ OK ] _dmarc.example.com         p=reject
+  Module 2 - Dangling CNAME / cloud asset verification
+    [INFO] example.com                no CNAME record (A/AAAA only)
+  Module 3 - Nameservers & zone transfer
+    [ OK ] Authoritative NS           2 name server(s): hera.ns.cloudflare.com elliott.ns.cloudflare.com
+    [ OK ] NS redundancy              2 name servers configured
+    [ OK ] Zone transfer hera.ns.cloudflare.com AXFR refused - zone is protected
+    [ OK ] Zone transfer elliott.ns.cloudflare.com AXFR refused - zone is protected
+    [INFO] Registrar                  RESERVED-Internet Assigned Numbers Authority
+    [INFO] Domain created             1995-08-14T04:00:00Z
+    [ OK ] NS delegation              whois and authoritative NS agree
+  Module 4 - DNSSEC & wildcard detection
+    [ OK ] DNSSEC                     enabled - 4 DNSKEY record(s), chain validated (ad flag)
+    [ OK ] DNSSEC chain               DS record present at the parent
+    [ OK ] Wildcard DNS               no wildcard record - random labels do not resolve
+
+[11:17:59] OK     Report written: /tmp/dnsshield-sample.mzQTxV/live-example/example.com/dns_security_audit.txt
+[11:17:59] OK     Timestamped copy: /tmp/dnsshield-sample.mzQTxV/live-example/example.com/dns_security_audit_20261017_111759.txt
+Audit summary
+  Target         example.com
+  Verdict        WARNING
+  Hosts          1
+  Checks         13 pass   1 warning   0 vulnerable   5 info
+  Report         /tmp/dnsshield-sample.mzQTxV/live-example/example.com/dns_security_audit.txt
+

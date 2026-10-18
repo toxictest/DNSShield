@@ -1,0 +1,45 @@
+================================================================================
+ DNSShield v1.0.0 - DNS Misconfiguration & Email Security Audit
+================================================================================
+ Generated    : 2026-10-17 11:18:01
+ Target       : vulnerable-demo.test
+ Hosts audited: 3
+ Duration     : 00:00:01
+ Verdict      : VULNERABLE
+ Checks       : 5 pass, 2 warning, 7 vulnerable, 4 info
+================================================================================
+
+--------------------------------------------------------------------------------
+ MODULE 1 - Email authentication & anti-spoofing
+--------------------------------------------------------------------------------
+   [PASS] SPF record                 present: v=spf1 +all
+   [INFO] SPF mechanisms             0 mechanism(s) authorised
+   [FAIL] SPF all mechanism          +all - ANY host may send mail for this domain
+   [FAIL] DMARC record               MISSING at _dmarc.vulnerable-demo.test - no spoofing policy
+   [WARN] DKIM keys                  1 selector(s) return a revoked key (v=DKIM1; p=) - no usable DKIM key
+--------------------------------------------------------------------------------
+ MODULE 2 - Dangling CNAME / cloud asset verification
+--------------------------------------------------------------------------------
+   [INFO] vulnerable-demo.test       no CNAME record (A/AAAA only)
+   [FAIL] legacy.vulnerable-demo.test CNAME -> legacy-vault.s3.amazonaws.com (Amazon S3) - NXDOMAIN: Potential Dangling Pointer / High Risk
+   [FAIL] apps.vulnerable-demo.test  CNAME -> old-app.herokuapp.com (Heroku) - NXDOMAIN: Potential Dangling Pointer / High Risk
+--------------------------------------------------------------------------------
+ MODULE 3 - Nameservers & zone transfer
+--------------------------------------------------------------------------------
+   [PASS] Authoritative NS           2 name server(s): ns1.vulnerable-demo.test ns2.vulnerable-demo.test
+   [PASS] NS redundancy              2 name servers configured
+   [FAIL] Zone transfer ns1.vulnerable-demo.test AXFR SUCCEEDED - 6 records dumped, full zone exposed
+   [PASS] Zone transfer ns2.vulnerable-demo.test AXFR refused - zone is protected
+   [INFO] Registrar                  Example Registrar Inc.
+   [INFO] Domain created             2016-03-04T11:22:33Z
+   [PASS] NS delegation              whois and authoritative NS agree
+--------------------------------------------------------------------------------
+ MODULE 4 - DNSSEC & wildcard detection
+--------------------------------------------------------------------------------
+   [FAIL] DNSSEC                     not enabled - no DNSKEY record, responses can be forged
+   [FAIL] DNSSEC chain               no DS record at the parent either
+   [WARN] Wildcard DNS               a random label resolves to 192.0.2.99 - catch-all record in use
+
+================================================================================
+ END OF REPORT
+================================================================================
